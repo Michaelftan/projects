@@ -1,0 +1,53 @@
+function checkCashRegister(price, cash, cid) {
+  let cidAmount = 0;
+  let obj = {
+    status: "",
+    change: []
+  }
+  // value reference
+  let valueTable = [{"ONE HUNDRED": 100}, {"TWENTY": 20}, {"TEN": 10}, {"FIVE": 5}, {"ONE": 1}, {"QUARTER": 0.25}, {"DIME": 0.1}, {"NICKEL": 0.05}, {"PENNY": 0.01}];
+  // to make cid an object
+  let objCid = Object.fromEntries(cid);
+  // to get the total amount of drawer
+  for(let i = 0; i < cid.length; i++) {
+    cidAmount += cid[i][1];
+  }
+  // looseChange amount
+  let looseChange = cash - price;
+  // looseChange is same amount of drawer
+  if (looseChange === Math.round(cidAmount * 100)/100) {
+    obj.status = "CLOSED";
+    obj.change = [...cid];
+    return obj;
+  } 
+  // get to know how many bills and coins to give
+  for (let i = 0; i < valueTable.length; i++) {
+    let counter = 0;
+    let tempArr = [];
+    // if current bill/coin can give as change
+    while (looseChange >= Object.values(valueTable[i]) &&
+      objCid[Object.keys(valueTable[i])] !== 0) {
+        // update looseChange and current bill/coin 
+        looseChange -= Object.values(valueTable[i]);
+        looseChange = Math.round(looseChange * 100)/100
+        objCid[Object.keys(valueTable[i])] -= Object.values(valueTable[i]);
+        counter++;
+    } 
+    // if current bill/coin is deducted and gave as change
+    if (counter !== 0) {
+      tempArr = [...Object.keys(valueTable[i])];
+      tempArr.push(Object.values(valueTable[i]) * counter);
+      obj.change.push(tempArr);
+    }
+  }
+  if (looseChange === 0) {
+    obj.status = "OPEN";
+    return obj;
+  } else {
+    obj.status = "INSUFFICIENT_FUNDS";
+    obj.change = [];
+    return obj;
+  }
+}
+
+checkCashRegister(3.26, 100, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]]);

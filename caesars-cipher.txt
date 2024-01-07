@@ -1,0 +1,23 @@
+function rot13(str) {
+
+  let answer = "";
+  
+  for (let i = 0; i < str.length; i++) {
+    let code = str[i].charCodeAt(0);
+    // check if char is non alphabetical
+    if (code < 65 || code > 90 && code < 97 || code > 122) {
+        answer += str[i];
+    } else {
+        code -= 13;
+        // to keep value of code from moving below 65(non alphabet char)
+        if (code < 65) {
+          answer += String.fromCharCode(91 - (65 - code));
+        } else {
+          answer += String.fromCharCode(code);
+        }
+    }
+  } 
+  return answer;
+}
+
+rot13("SERR CVMMN!");
